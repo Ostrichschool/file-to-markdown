@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File to Markdown コンバーター</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📄 File to Markdown</h1>
+            <p class="subtitle">Microsoft Markitdown を用いて、各種ファイルを Markdown 形式に変換します</p>
+        </header>
+
+        <!-- ドロップゾーン -->
+        <div id="drop-zone" class="drop-zone">
+            <div class="drop-zone-content">
+                <div class="icon">📁</div>
+                <p>ファイルをここにドラッグ＆ドロップ</p>
+                <p class="hint">または <label for="file-input" class="file-link">ファイルを選択</label></p>
+                <input type="file" id="file-input" multiple hidden />
+            </div>
+        </div>
+
+        <!-- サポート形式 -->
+        <div class="supported-formats">
+            <strong>サポートされる形式：</strong>
+            PDF、Word、Excel、PowerPoint、画像、HTML、Email、EPUB、CSV など
+        </div>
+
+        <!-- 変換ボタン -->
+        <div class="actions">
+            <button id="convert-btn" class="btn btn-primary" disabled>変換実行</button>
+            <button id="clear-btn" class="btn btn-secondary">クリア</button>
+        </div>
+
+        <!-- 選択ファイルリスト -->
+        <div id="file-list" class="file-list hidden">
+            <div id="file-list-content"></div>
+        </div>
+
+        <!-- 変換結果 -->
+        <div id="results" class="results"></div>
+
+        <!-- プレビューモーダル -->
+        <div id="modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modal-filename">プレビュー</h2>
+                    <button id="close-btn" class="close-btn">&times;</button>
+                </div>
+                <div id="modal-body" class="modal-body"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
