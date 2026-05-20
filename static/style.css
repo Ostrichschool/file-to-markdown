@@ -21,9 +21,13 @@ body {
     padding: 40px;
 }
 
+.container.wide {
+    max-width: 1180px;
+}
+
 header {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 24px;
 }
 
 header h1 {
@@ -37,7 +41,255 @@ header h1 {
     font-size: 0.95rem;
 }
 
-/* ドロップゾーン */
+.vault-path {
+    margin-top: 10px;
+    color: #777;
+    font-size: 0.85rem;
+}
+
+.vault-path code {
+    background: #f5f5f5;
+    border-radius: 6px;
+    padding: 3px 6px;
+}
+
+.tabs {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 12px;
+}
+
+.tab-btn {
+    border: 1px solid #ddd;
+    background: #fafafa;
+    border-radius: 999px;
+    padding: 10px 18px;
+    cursor: pointer;
+    font-weight: 700;
+    color: #555;
+}
+
+.tab-btn.active {
+    color: white;
+    border-color: #667eea;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
+.vault-toolbar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.search-input {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 0.95rem;
+}
+
+.status-panel {
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+}
+
+.status-panel.ok {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-panel.warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.vault-layout {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 20px;
+}
+
+.vault-sidebar {
+    border: 1px solid #eee;
+    border-radius: 12px;
+    background: #fafafa;
+    padding: 14px;
+    min-height: 520px;
+}
+
+.vault-sidebar h2 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+}
+
+.vault-file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 680px;
+    overflow-y: auto;
+}
+
+.vault-file {
+    text-align: left;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    background: white;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.vault-file:hover,
+.vault-file.active {
+    border-color: #667eea;
+    background: #f2f3ff;
+}
+
+.vault-file-name {
+    display: block;
+    font-weight: 700;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.vault-file-folder {
+    display: block;
+    color: #888;
+    font-size: 0.78rem;
+    margin-top: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.vault-main {
+    min-width: 0;
+}
+
+.document-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.document-header h2 {
+    font-size: 1.25rem;
+}
+
+.document-meta {
+    color: #777;
+    font-size: 0.85rem;
+    margin-top: 4px;
+}
+
+.document-viewer {
+    border: 1px solid #eee;
+    border-radius: 12px;
+    background: white;
+    padding: 24px;
+    min-height: 360px;
+    line-height: 1.75;
+    overflow-wrap: anywhere;
+}
+
+.document-viewer.empty,
+.muted {
+    color: #888;
+}
+
+.document-viewer h1,
+.document-viewer h2,
+.document-viewer h3 {
+    margin: 1em 0 0.4em;
+    line-height: 1.35;
+}
+
+.document-viewer h1:first-child,
+.document-viewer h2:first-child,
+.document-viewer h3:first-child {
+    margin-top: 0;
+}
+
+.document-viewer code {
+    background: #f5f5f5;
+    border-radius: 5px;
+    padding: 2px 5px;
+}
+
+.document-viewer hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 18px 0;
+}
+
+.history-section {
+    margin-top: 22px;
+}
+
+.history-section h3 {
+    margin-bottom: 10px;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.commit-item {
+    display: grid;
+    grid-template-columns: 78px 90px minmax(0, 1fr) 120px;
+    gap: 8px;
+    align-items: center;
+    padding: 10px;
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+.commit-item code {
+    background: #f0f0f0;
+    border-radius: 5px;
+    padding: 2px 4px;
+}
+
+.commit-subject {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.commit-date,
+.commit-author {
+    color: #777;
+}
+
+.error-message {
+    color: #b00020;
+    background: #fff0f2;
+    border-radius: 8px;
+    padding: 10px;
+}
+
 .drop-zone {
     border: 3px dashed #ccc;
     border-radius: 12px;
@@ -77,7 +329,6 @@ header h1 {
     font-weight: bold;
 }
 
-/* サポート形式 */
 .supported-formats {
     text-align: center;
     margin-top: 15px;
@@ -85,7 +336,6 @@ header h1 {
     color: #999;
 }
 
-/* ボタン */
 .actions {
     display: flex;
     justify-content: center;
@@ -127,7 +377,6 @@ header h1 {
     background: #d0d0d0;
 }
 
-/* ファイルリスト */
 .file-list {
     margin-top: 25px;
     background: #f9f9f9;
@@ -166,7 +415,6 @@ header h1 {
     margin-left: 10px;
 }
 
-/* 変換結果 */
 .results {
     margin-top: 25px;
 }
@@ -250,7 +498,6 @@ header h1 {
     opacity: 0.85;
 }
 
-/* モーダル */
 .modal {
     position: fixed;
     top: 0;
@@ -314,12 +561,10 @@ header h1 {
     line-height: 1.6;
 }
 
-/* ユーティリティ */
 .hidden {
     display: none !important;
 }
 
-/* ローディング */
 .loading {
     text-align: center;
     padding: 20px;
@@ -340,21 +585,42 @@ header h1 {
     100% { transform: rotate(360deg); }
 }
 
-/* レスポンシブ */
-@media (max-width: 600px) {
-    .container {
+@media (max-width: 860px) {
+    .container,
+    .container.wide {
         padding: 20px;
+    }
+
+    .vault-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .vault-sidebar {
+        min-height: auto;
+    }
+
+    .commit-item {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
     }
 
     header h1 {
         font-size: 1.5rem;
     }
 
-    .actions {
+    .actions,
+    .vault-toolbar,
+    .tabs {
         flex-direction: column;
     }
 
-    .btn {
+    .btn,
+    .tab-btn {
         width: 100%;
     }
 }
