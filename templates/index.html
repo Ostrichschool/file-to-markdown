@@ -3,47 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File to Markdown コンバーター</title>
+    <title>Markdown Vault Hub</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div class="container">
+    <div class="container wide">
         <header>
-            <h1>📄 File to Markdown</h1>
-            <p class="subtitle">Microsoft Markitdown を用いて、各種ファイルを Markdown 形式に変換します</p>
+            <h1>📚 Markdown Vault Hub</h1>
+            <p class="subtitle">Obsidian Vaultを社内LANで閲覧し、Git履歴を確認するためのローカルWebアプリ</p>
+            <p class="vault-path">Vault: <code>{{ vault_path }}</code></p>
         </header>
 
-        <!-- ドロップゾーン -->
-        <div id="drop-zone" class="drop-zone">
-            <div class="drop-zone-content">
-                <div class="icon">📁</div>
-                <p>ファイルをここにドラッグ＆ドロップ</p>
-                <p class="hint">または <label for="file-input" class="file-link">ファイルを選択</label></p>
-                <input type="file" id="file-input" multiple hidden />
+        <nav class="tabs" aria-label="機能切り替え">
+            <button class="tab-btn active" data-tab="vault-tab">Vault閲覧</button>
+            <button class="tab-btn" data-tab="convert-tab">ファイル→Markdown変換</button>
+        </nav>
+
+        <section id="vault-tab" class="tab-panel active">
+            <div class="vault-toolbar">
+                <input id="vault-search" class="search-input" type="search" placeholder="ファイル名・フォルダ名で検索">
+                <button id="refresh-vault-btn" class="btn btn-secondary">再読み込み</button>
             </div>
-        </div>
 
-        <!-- サポート形式 -->
-        <div class="supported-formats">
-            <strong>サポートされる形式：</strong>
-            PDF、Word、Excel、PowerPoint、画像、HTML、Email、EPUB、CSV など
-        </div>
+            <div id="vault-status" class="status-panel"></div>
 
-        <!-- 変換ボタン -->
-        <div class="actions">
-            <button id="convert-btn" class="btn btn-primary" disabled>変換実行</button>
-            <button id="clear-btn" class="btn btn-secondary">クリア</button>
-        </div>
+            <div class="vault-layout">
+                <aside class="vault-sidebar">
+                    <h2>Markdownファイル</h2>
+                    <div id="vault-file-list" class="vault-file-list"></div>
+                </aside>
 
-        <!-- 選択ファイルリスト -->
-        <div id="file-list" class="file-list hidden">
-            <div id="file-list-content"></div>
-        </div>
+                <main class="vault-main">
+                    <div class="document-header">
+                        <div>
+                            <h2 id="document-title">ファイルを選択してください</h2>
+                            <p id="document-meta" class="document-meta"></p>
+                        </div>
+                    </div>
 
-        <!-- 変換結果 -->
-        <div id="results" class="results"></div>
+                    <article id="document-viewer" class="document-viewer empty">
+                        左の一覧からMarkdownファイルを選択すると、ここに本文が表示されます。
+                    </article>
 
-        <!-- プレビューモーダル -->
+                    <section class="history-section">
+                        <h3>Git履歴</h3>
+                        <div id="history-list" class="history-list">ファイル選択後に履歴を表示します。</div>
+                    </section>
+                </main>
+            </div>
+        </section>
+
+        <section id="convert-tab" class="tab-panel">
+            <div id="drop-zone" class="drop-zone">
+                <div class="drop-zone-content">
+                    <div class="icon">📁</div>
+                    <p>ファイルをここにドラッグ＆ドロップ</p>
+                    <p class="hint">または <label for="file-input" class="file-link">ファイルを選択</label></p>
+                    <input type="file" id="file-input" multiple hidden />
+                </div>
+            </div>
+
+            <div class="supported-formats">
+                <strong>サポートされる形式：</strong>
+                PDF、Word、Excel、PowerPoint、画像、HTML、Email、EPUB、CSV など
+            </div>
+
+            <div class="actions">
+                <button id="convert-btn" class="btn btn-primary" disabled>変換実行</button>
+                <button id="clear-btn" class="btn btn-secondary">クリア</button>
+            </div>
+
+            <div id="file-list" class="file-list hidden">
+                <div id="file-list-content"></div>
+            </div>
+
+            <div id="results" class="results"></div>
+        </section>
+
         <div id="modal" class="modal hidden">
             <div class="modal-content">
                 <div class="modal-header">
