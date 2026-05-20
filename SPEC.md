@@ -1,4 +1,4 @@
-# File to Markdown コンバーター 仕様書
+# File to Markdown コンバーター / Markdown Vault Hub 仕様書
 
 ---
 
@@ -6,11 +6,12 @@
 
 | 項目 | 内容 |
 |------|------|
-| アプリ名 | File to Markdown コンバーター |
-| 目的 | 各種ファイルを Markdown 形式に変換する |
-| 動作環境 | ローカル（同一 PC のみ）|
-| アクセス URL | http://localhost:5050 |
+| アプリ名 | File to Markdown コンバーター / Markdown Vault Hub |
+| 目的 | 各種ファイルのMarkdown変換、およびObsidian Vault等のMarkdownフォルダの閲覧 |
+| 動作環境 | ローカルPC、または社内LAN内のサーバーPC |
+| 既定アクセスURL | http://localhost:5050 |
 | ファイルサイズ上限 | 100 MB |
+| Vault閲覧 | 読み取り専用 |
 
 ---
 
@@ -21,13 +22,14 @@
 | バックエンド | Python 3.x、Flask 3.x |
 | 変換エンジン | Microsoft MarkItDown（`markitdown[all]`）|
 | フロントエンド | HTML / CSS / Vanilla JavaScript |
-| 起動方式 | `start.command`（macOS）|
+| 履歴表示 | Git CLI |
+| 起動方式 | `python app.py` または `start.command`（macOS）|
 
 ---
 
 ## 3. ファイル構成
 
-```
+```text
 file_to_markdown/
 ├── app.py                  # Flask アプリ本体
 ├── requirements.txt        # 依存パッケージ一覧
@@ -42,12 +44,22 @@ file_to_markdown/
 │   └── style.css           # スタイルシート
 ├── uploads/                # 変換処理中の一時ファイル置き場（自動削除）
 ├── outputs/                # 未使用（将来拡張用）
-└── venv/                   # Python 仮想環境（git 管理外）
+└── vault/                  # OBSIDIAN_VAULT_PATH未指定時の既定Vault
 ```
 
 ---
 
-## 4. API 仕様
+## 4. 環境変数
+
+| 変数名 | 既定値 | 内容 |
+|--------|--------|------|
+| `OBSIDIAN_VAULT_PATH` | アプリフォルダ内の `vault/` | 閲覧対象のObsidian VaultまたはMarkdownフォルダ |
+| `APP_HOST` | `127.0.0.1` | Flaskの待受ホスト。社内LAN公開時は `0.0.0.0` |
+| `PORT` | `5050` | 起動ポート |
+
+---
+
+## 5. API 仕様
 
 ### POST `/api/convert`
 
@@ -81,6 +93,74 @@ file_to_markdown/
 
 ---
 
+### GET `/api/vault/files`
+
+Vault配下のMarkdownまたはテキストファイル一覧を返す。
+
+対象拡張子：
+
+```text
+.md
+.markdown
+.txt
+```
+
+**レスポンス（成功時）**
+
+```json
+{
+  "success": true,
+  "vault_path": "/path/to/vault",
+  "files": [
+    {
+      "path": "01_Requirements/要件定義.md",
+      "name": "要件定義.md",
+      "folder": "01_Requirements",
+      "size": 1234,
+      "modified": "2026-05-20T10:00:00"
+    }
+  ]
+}
+```
+
+---
+
+### GET `/api/vault/file?path=<relative-path>`
+
+指定したVault内ファイルの本文を返す。
+
+**制約**
+
+- Vault外へのパストラバーサルを禁止
+- `.md` / `.markdown` / `.txt` のみ対象
+- UTF-8として読み込めるファイルのみ対象
+
+---
+
+### GET `/api/vault/history?path=<relative-path>`
+
+Git管理されたVaultで、指定ファイルまたはVault全体の履歴を返す。
+
+内部では以下に相当するGitコマンドを実行する。
+
+```bash
+git -C "$OBSIDIAN_VAULT_PATH" log --pretty=format:%h%x09%an%x09%ad%x09%s --date=short --max-count=50 -- <path>
+```
+
+---
+
+### GET `/api/vault/status`
+
+Git管理されたVaultで、未コミット変更の有無を返す。
+
+内部では以下に相当するGitコマンドを実行する。
+
+```bash
+git -C "$OBSIDIAN_VAULT_PATH" status --short
+```
+
+---
+
 ### GET `/download/<filename>`
 
 指定したファイル名の Markdown ファイルをダウンロードする（現在は未使用）。
@@ -93,7 +173,21 @@ file_to_markdown/
 
 ---
 
-## 5. フロントエンド動作仕様
+## 6. フロントエンド動作仕様
+
+### タブ構成
+
+| タブ | 内容 |
+|------|------|
+| Vault閲覧 | Vault内Markdownの一覧・本文・Git履歴を表示 |
+| ファイル→Markdown変換 | 従来のファイル変換画面 |
+
+### Vault閲覧
+
+- 起動時に `/api/vault/files` と `/api/vault/status` を取得する
+- ファイル選択時に `/api/vault/file` と `/api/vault/history` を取得する
+- 検索欄でファイル名・フォルダ名を絞り込む
+- Markdownは簡易レンダリングで表示する
 
 ### ファイル選択
 
@@ -120,11 +214,24 @@ file_to_markdown/
 
 ---
 
-## 6. セキュリティ・制約
+## 7. セキュリティ・制約
 
 | 項目 | 内容 |
 |------|------|
-| アクセス範囲 | `127.0.0.1`（同一 PC のみ）|
+| 既定アクセス範囲 | `127.0.0.1`（同一PCのみ）|
+| LAN公開 | `APP_HOST=0.0.0.0` 指定時のみ |
+| Vault編集 | 非対応。Web画面からVaultを書き換えない |
+| パストラバーサル対策 | Vault外のファイルパスを拒否 |
 | ファイルの保持 | アップロードファイルは変換後すぐに削除 |
 | デバッグモード | `debug=True`（本番環境への公開不可） |
-| 外部公開 | 非対応（公開する場合は `host='0.0.0.0'` に変更 + ファイアウォール設定が必要）|
+| 外部公開 | 非推奨。公開する場合は認証・TLS・ファイアウォール設定が必要 |
+
+---
+
+## 8. 今後の拡張候補
+
+- 認証機能
+- Markdownレンダリング品質の向上
+- MermaidやObsidian内部リンクへの対応
+- GitHub / GitLab remoteとの同期状態表示
+- QuartzやMkDocsへの静的サイト出力
